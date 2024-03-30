@@ -10,29 +10,44 @@ from urllib.request import urlopen
 from cairosvg import svg2png
 
 
-app = FastAPI()
+class App(FastAPI):
+    default_index: str = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG to PNG</title>
+</head>
+<body>
+    Follow <a href="https://github.com/nakidai/stp">this link</a> for examples.
+</body>
+</html>"""
 
-@app.get("/")
-def root(link: Annotated[str | None, Query()] = None) -> Response:
-    if link is None:
-        return Response(content="Hello, world!", media_type="text/html")
+    def __init__(self, index: str | None = None) -> None:
+        super().__init__()
+        self.index: str = App.default_index if index is None else index
 
-    try:
-        svg = urlopen(link).read()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Cannot download file: {e}"
-        )
-    try:
-        png = svg2png(bytestring=svg)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Cannot convert file: {e}"
-        )
+        @self.get("/")
+        def app(link: Annotated[str | None, Query()] = None) -> Response:
+            if link is None:
+                return Response(content=self.index, media_type="text/html")
 
-    return Response(content=png, media_type="image/png")
+            try:
+                svg = urlopen(link).read()
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Cannot download file: {e}"
+                )
+            try:
+                png = svg2png(bytestring=svg)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Cannot convert file: {e}"
+                )
+
+            return Response(content=png, media_type="image/png")
 
 
 def main() -> None:
@@ -48,7 +63,7 @@ def main() -> None:
         help="Port where app should be run"
     )
     parser.add_argument(
-        "-h", "--host",
+        "-i", "--host",
         default="127.0.0.1",
         metavar="HOST",
         help="IP of your host"
@@ -57,7 +72,7 @@ def main() -> None:
 
     try:
         uvicorn.run(
-            app,
+            App(),
             host=args.host,
             port=args.port,
             log_level="info"

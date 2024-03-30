@@ -47,12 +47,18 @@ def main() -> None:
         metavar="PORT",
         help="Port where app should be run"
     )
+    parser.add_argument(
+        "-h", "--host",
+        default="127.0.0.1",
+        metavar="HOST",
+        help="IP of your host"
+    )
     args = parser.parse_args()
 
     try:
         uvicorn.run(
             app,
-            host="127.0.0.1",
+            host=args.host,
             port=args.port,
             log_level="info"
         )

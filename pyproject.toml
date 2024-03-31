@@ -3,7 +3,7 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "stp"
+name = "wastp"
 description = "SVG to PNG web converter"
 readme = "README.md"
 version = "v1.0"
@@ -19,4 +19,4 @@ classifiers = [
 ]
 
 [project.scripts]
-stp = "stp:main"
+wastp = "wastp:main"

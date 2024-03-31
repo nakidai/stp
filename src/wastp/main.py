@@ -18,7 +18,7 @@ from urllib.request import urlopen
 from cairosvg import svg2png
 
 
-class STP(FastAPI):
+class WASTP(FastAPI):
     """
     Web API for converting SVG to PNG
     """
@@ -42,7 +42,7 @@ class STP(FastAPI):
         :argument index: Page if there's no arguemnt
         """
         super().__init__()
-        self.index: str = App.default_index if index is None else index
+        self.index: str = WASTP.default_index if index is None else index
 
         @self.get("/")
         def app(link: Annotated[str | None, Query()] = None) -> Response:
@@ -95,7 +95,7 @@ def main() -> None:
 
     try:
         uvicorn.run(
-            STP(),
+            WASTP(),
             host=args.host,
             port=args.port,
             log_level="info"

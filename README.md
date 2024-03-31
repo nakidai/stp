@@ -1,4 +1,4 @@
-STP
+WASTP
 --
 Simple web api for converting svg to png. I use it as just useful way to render
 svg images in discord, because it can't to it itself.

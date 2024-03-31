@@ -1,1 +1,1 @@
-from .main import App, main
+from .main import STP, main

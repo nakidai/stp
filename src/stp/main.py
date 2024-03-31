@@ -1,3 +1,11 @@
+"""
+Web API for converting SVG to PNG
+
+This module has class STP and main function.
+- main is the CLI wrapper for STP
+- STP is the application itself
+"""
+
 from typing import Annotated
 import argparse
 
@@ -10,7 +18,11 @@ from urllib.request import urlopen
 from cairosvg import svg2png
 
 
-class App(FastAPI):
+class STP(FastAPI):
+    """
+    Web API for converting SVG to PNG
+    """
+
     default_index: str = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,11 +36,22 @@ class App(FastAPI):
 </html>"""
 
     def __init__(self, index: str | None = None) -> None:
+        """
+        Create App instance
+
+        :argument index: Page if there's no arguemnt
+        """
         super().__init__()
         self.index: str = App.default_index if index is None else index
 
         @self.get("/")
         def app(link: Annotated[str | None, Query()] = None) -> Response:
+            """
+            Convert SVG to PNG, show self.index if there's no argument
+
+            :argument link: Link to the SVG image
+            :return: Converted image or self.index if there's no link
+            """
             if link is None:
                 return Response(content=self.index, media_type="text/html")
 
@@ -72,7 +95,7 @@ def main() -> None:
 
     try:
         uvicorn.run(
-            App(),
+            STP(),
             host=args.host,
             port=args.port,
             log_level="info"

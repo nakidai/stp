@@ -14,6 +14,7 @@ from fastapi import status, HTTPException, Response
 from fastapi.responses import HTMLResponse
 import uvicorn
 
+from urllib.parse import quote
 from urllib.request import urlopen
 from cairosvg import svg2png
 
@@ -54,6 +55,10 @@ class WASTP(FastAPI):
             """
             if link is None:
                 return Response(content=self.index, media_type="text/html")
+            
+            link = quote(link)
+            link = link.replace("%3A//", "://")
+            print(link)
 
             try:
                 svg = urlopen(link).read()
